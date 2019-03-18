@@ -5,6 +5,7 @@
 \usepackage{epstopdf}
 \usepackage{multicol}
 \usepackage{ragged2e}
+%\usepackage{polski}
 %% maxwidth is the original width if it is less than linewidth
 %% otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -125,196 +126,68 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 \parbox[t][\columnheight]{\textwidth}
 {
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{block}{Introduction}
+<<echo=FALSE, warning=FALSE, error=FALSE, message=FALSE>>=
+library(HaDeX)
+library(ggplot2)
+
+knitr::opts_chunk$set(out.width=1000, out.height=750)
+poster_theme <- theme_bw(base_size = 17) +
+                theme(legend.position = "bottom")
+
+dat <- read_hdx(system.file(package = "HaDeX", "HaDeX/data/KD_180110_CD160_HVEM.csv"))
+
+calc_dat <- prepare_dataset(dat,
+                             in_state_first = "CD160_0.001",
+                             chosen_state_first = "CD160_1",
+                             out_state_first = "CD160_1440",
+                             in_state_second = "CD160_HVEM_0.001",
+                             chosen_state_second = "CD160_HVEM_1",
+                             out_state_second = "CD160_HVEM_1440") 
+
+@
+
 \justify lalala 
+
+% \begin{figure}
+% \includegraphics[width=0.95\columnwidth]{app_hadex_front.pdf}
+% \end{figure}
+
 \end{block}
-%\vfill % ------------------------------------------- Możecie zacommentować, zostawia puste miejsce, jeśli macie za mało tekstu doda większe przerwy
 
-%\begin{block}{Phylogenetic tree with sequences selected to multiple alignment}
-%\begin{figure} %--------------------------------------------------jak dodać figurę do posteru
-%\includegraphics[trim={0 1cm 0 1cm},clip,width=1.1\columnwidth]{tree.pdf}
-%\end{figure}
 
-%\end{block}
 
 \vfill
-\begin{block}{Multiple sequence alignment of various species of CsgA and $\alpha$-synuclein} 
-<<echo=FALSE,results='asis',message=FALSE,error=FALSE,warning=FALSE,fig.width=15,fig.height=13.5>>=
-library(ggplot2)
-library(dplyr)
 
-# input file -----------------------------------
-all_lines <- readLines("csga.syn.aln")
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-# number of facets
-n_facets <- 5
+\begin{block}{Coverage of the sequence} 
 
-# important regions ---------------------------------
+\justify lala
 
-region_borders <- list(R1 = 43L:65, 
-                       #R2 = 66L:87,
-                       R3 = 88L:110,
-                       #R4 = 111L:132,
-                       R5 = 133L:151)
-
-# amino acid colors ---------------------------------
-
-alph_color_list <- list(list(col = "#8dd3c7", aa = c("G", "A", "S", "T")),
-                        list(col = "#ffffb3", aa = c("C", "V", "I", "L", "P", "F", "Y", "M", "W")),
-                        list(col = "#bebada", aa = c("N", "H", "Q")),
-                        list(col = "#fb8072", aa = c("D", "E")),
-                        list(col = "#80b1d3", aa = c("K", "R")),
-                        list(col = "white", aa = c("-")))
-
-reduced_alph <- lapply(alph_color_list, function(i) i[["aa"]])
-
-names(reduced_alph) <- c("Small nonpolar",
-                         "Hydrophobic",
-                         "Polar",
-                         "Negatively charged",
-                         "Positively charged",
-                         "Gap")
-
-cols <- sapply(alph_color_list, function(i) i[["col"]])
-
-# process alignment ---------------------------------
-
-prot_id <- cumsum(grepl("^>", all_lines))
-
-all_prots <- split(all_lines, prot_id)
-
-aln_dat <- lapply(all_prots, function(ith_prot) {
-  data.frame(species = sub("^>", "", ith_prot[1]),
-             aa = strsplit(paste0(ith_prot[-1], collapse = ""), "")[[1]],
-             stringsAsFactors = FALSE)
-}) %>% bind_rows() %>% 
-  #mutate(species = factor(species, levels = rev(c("Escherichia coli", "Citrobacter koseri", "Salmonella typhimurium", 
-  #                                                "Shewanella oneidensis")))) %>% 
-  group_by(species) %>% 
-  mutate(pos = 1L:length(species),
-         pos_disc = cut(pos, quantile(pos, probs = seq(from = 0, to = 1, length.out = n_facets + 1)), include.lowest = TRUE),
-         aa_groups = factor(biogram::degenerate(aa, reduced_alph),
-                            levels = names(reduced_alph)),
-         real_pos = cumsum(aa != "-"),
-         prone = real_pos %in% unlist(region_borders),
-         pos_prone = ifelse(prone, pos, NA),
-         pos_prone = ifelse(species == "E. coli", pos_prone, NA),
-         pos_prone = ifelse(aa != "-", pos_prone, NA),
-         csga = real_pos %in% 104L:112,
-         pos_csga = ifelse(csga, pos, NA),
-         pos_csga = ifelse(species == "E. coli", pos_csga, NA),
-         pos_csga = ifelse(aa != "-", pos_csga, NA),
-         assyn = real_pos %in% 98L:105,
-         pos_assyn = ifelse(assyn, pos, NA),
-         pos_assyn = ifelse(species == "Alpha-synuclein", pos_assyn, NA),
-         pos_assyn = ifelse(aa != "-", pos_assyn, NA))
-
-
-ggplot(aln_dat, aes(x = pos, y = species, label = aa, fill = aa_groups)) +
-  geom_tile(color = NA) +
-  facet_wrap(~ pos_disc, ncol = 1, scales = "free_x") +
-  geom_tile(aes(x = pos_prone), color = "black", fill = NA, size = 2) +
-  geom_tile(aes(x = pos_csga), color = "magenta", fill = NA, size = 2) +
-  geom_tile(aes(x = pos_assyn), color = "magenta", fill = NA, size = 2) +
-  #geom_text(size = 2.1, family = "Courier", fontface="bold") +
-  geom_text(size = 6.5)  +
-  scale_x_continuous("Position", expand = c(0, 0)) +
-  scale_y_discrete("") +
-  scale_fill_manual("", values = cols) +
-  guides(fill = guide_legend(nrow = 1, byrow = TRUE, override.aes = list(color = "black", size = 1.4))) + 
-  theme_bw(base_size = 24) +
-  theme(legend.position = "bottom",
-        legend.key.size = unit(2.5, "lines"),
-        strip.background = element_blank(),
-        strip.text.x = element_blank())
-@
-\justify Repeated units from CsgA: R1, R3 and R5, are highlited on black. CsgAs and $\alpha$-synuclein sequences shared only a single common region (highlighted in red), residues 104{:}112 in CsgA and residues 98{:}104 in $\alpha$-synuclein. If the region is modified in $\alpha$-synuclein, CsgC is unable to inhibit this protein.
-%\begin{figure} %--------------------------------------------------jak dodać figurę do posteru
-%\includegraphics[width=0.85\columnwidth]{aln6.pdf}
-%\end{figure}
 \end{block}
 %\vfill
 
-\begin{block}{Multiple sequence alignment of various species of CsgC}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{block}{Differential plot}
 %\begin{figure} %--------------------------------------------------jak dodać figurę do posteru
-<<echo=FALSE,results='asis',message=FALSE,error=FALSE,warning=FALSE,fig.width=15,fig.height=12>>=
-library(ggplot2)
-library(dplyr)
+<<echo=FALSE, warning=FALSE, message=FALSE, error=FALSE>>=
 
-# input file -----------------------------------
-all_lines <- readLines("CsgC_sekwencje.fasta.aln")
-
-# number of facets
-n_facets <- 5
-
-# important regions ---------------------------------
-
-region_borders <- list(R1 = 37L:39)
-
-# amino acid colors ---------------------------------
-
-alph_color_list <- list(list(col = "#8dd3c7", aa = c("G", "A", "S", "T")),
-                        list(col = "#ffffb3", aa = c("C", "V", "I", "L", "P", "F", "Y", "M", "W")),
-                        list(col = "#bebada", aa = c("N", "H", "Q")),
-                        list(col = "#fb8072", aa = c("D", "E")),
-                        list(col = "#80b1d3", aa = c("K", "R")),
-                        list(col = "white", aa = c("-")))
-
-reduced_alph <- lapply(alph_color_list, function(i) i[["aa"]])
-
-names(reduced_alph) <- c("Small nonpolar",
-                         "Hydrophobic",
-                         "Polar",
-                         "Negatively charged",
-                         "Positively charged",
-                         "Gap")
-
-cols <- sapply(alph_color_list, function(i) i[["col"]])
-
-# process alignment ---------------------------------
-
-prot_id <- cumsum(grepl("^>", all_lines))
-
-all_prots <- split(all_lines, prot_id)
-
-aln_dat <- lapply(all_prots, function(ith_prot) {
-  data.frame(species = sub("^>", "", ith_prot[1]),
-             aa = strsplit(paste0(ith_prot[-1], collapse = ""), "")[[1]],
-             stringsAsFactors = FALSE)
-}) %>% bind_rows() %>% 
-  #mutate(species = factor(species, levels = rev(c("Escherichia coli", "Citrobacter koseri", "Salmonella typhimurium", 
-  #                                                "Shewanella oneidensis")))) %>% 
-  group_by(species) %>% 
-  mutate(pos = 1L:length(species),
-         pos_disc = cut(pos, quantile(pos, probs = seq(from = 0, to = 1, length.out = n_facets + 1)), include.lowest = TRUE),
-         aa_groups = factor(biogram::degenerate(aa, reduced_alph),
-                            levels = names(reduced_alph)),
-         real_pos = cumsum(aa != "-"),
-         prone = real_pos %in% 37L:39,
-         pos_prone = ifelse(prone, pos, NA),
-         pos_prone = ifelse(species == "E. coli", pos_prone, NA),
-         pos_prone = ifelse(aa != "-", pos_prone, NA))
-
-ggplot(aln_dat, aes(x = pos, y = species, label = aa, fill = aa_groups)) +
-  geom_tile(color = NA) +
-  facet_wrap(~ pos_disc, ncol = 1, scales = "free_x") +
-  geom_tile(aes(x = pos_prone), color = "black", fill = NA, size = 2) +
-  #geom_text(size = 2.1, family = "Courier", fontface="bold") +
-  geom_text(size = 7.1)  +
-  scale_x_continuous("Position", expand = c(0, 0)) +
-  scale_y_discrete("") +
-  scale_fill_manual("", values = cols) +
-  guides(fill = guide_legend(nrow = 1, byrow = TRUE, override.aes = list(color = "black", size = 1.4))) + 
-  theme_bw(base_size = 24) +
-  theme(legend.position = "bottom",
-        legend.key.size = unit(2.5, "lines"),
-        strip.background = element_blank(),
-        strip.text.x = element_blank())
+ comparison_plot(calc_dat = calc_dat,
+                 plot_title = "Theoretical fraction exchanged \nin state comparison in chosen time",
+                 theoretical = TRUE) +
+   poster_theme 
+ 
+ comparison_plot(calc_dat = calc_dat,
+                 plot_title = "Fraction exchanged \nin state comparison in chosen time") +
+   poster_theme 
 @
-\justify Motif CxC that is essential for the functioning of CsgC as an inhibitor is highlited on black.
 
-%\includegraphics[width=0.8\columnwidth]{aln2.pdf}
-%\end{figure}
+\justify lalalal
+
 \end{block}
 }
 \end{minipage}
@@ -330,157 +203,36 @@ ggplot(aln_dat, aes(x = pos, y = species, label = aa, fill = aa_groups)) +
 \parbox[t][\columnheight]{\textwidth}
 {
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{block}{Woods plot format}
 
-\begin{block}{Pairwise sequence identity of CsgA and CsgC}
-<<echo=FALSE,results='asis',message=FALSE,error=FALSE,warning=FALSE,fig.width=14,fig.height=11>>=
-library(dplyr)
-library(ggplot2)
-library(reshape2)
+<<echo=FALSE, warning=FALSE, error=FALSE, message=FALSE>>=
 
-compute_pid <- function(file) {
-  all_lines <- readLines(file)
-  
-  all_prots <- split(all_lines, cumsum(grepl("^>", all_lines)))
-  
-  all_prots <- all_prots[order(sapply(all_prots, first))]
-  
-  splitted_seqs <- sapply(all_prots, function(i) paste0(i[-1], collapse = "")) %>% 
-    strsplit("")
-  
-  lapply(combn(1L:length(all_prots), 2, simplify = FALSE), function(i) {
-    pid <- data.frame(S1 = splitted_seqs[[i[1]]], S2 = splitted_seqs[[i[2]]], stringsAsFactors = FALSE) %>% 
-      filter(S1 != "-", S2 != "-") %>% 
-      mutate(ident = S1 == S2) %>% 
-      summarise(ident = mean(ident)) %>% 
-      unlist %>% 
-      unname()
-    
-    data.frame(S1 = all_prots[[i[1]]][[1]],
-               S2 = all_prots[[i[2]]][[1]],
-               pid = pid)
-  }) %>% 
-    do.call(rbind, .)
-}
-
-pid_data <- rbind(compute_pid("csga.syn.aln") %>% 
-                    mutate(protein = "CsgA"),
-                  compute_pid("CsgC_sekwencje.fasta.aln") %>% 
-                    mutate(protein = "CsgC")) %>% 
-  mutate(S1 = sub(">", "", S1),
-         S2 = sub(">", "", S2))
-
-ggplot(pid_data, aes(x = S1, y = S2, fill = pid, label = round(pid, 2))) +
-  geom_tile(color = "black") +
-  geom_text(color = "white", size = 8) +
-  scale_y_discrete("") +
-  scale_x_discrete("") +
-  scale_fill_continuous("Pairwise sequence identity") +
-  guides(fill = guide_colorbar(barwidth = 30, barheight = 2)) +
-  facet_wrap(~ protein) +
-  theme_bw(base_size = 24) + 
-  theme(axis.text.x = element_text(angle = 80, hjust = 1),
-        legend.position = "bottom")
-
+ woods_plot(calc_dat = calc_dat) +
+   poster_theme
+ 
 @
-%\begin{figure} %--------------------------------------------------jak dodać figurę do posteru
-%\includegraphics[width=0.75\columnwidth]{pid3.pdf}
-%\end{figure}
-\justify Significant homologues were found only in closely related bacteria. Generally, CsgA and CsgC showed very similar pairwise sequence identity in corresponding pairs of bacteria with the exception of CsgC from \textit{Enterobacter hormaechei} which demonstrated much lower identity compared with other species.
+
+\justify lalala
 \end{block}
 \vfill
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{block}{Multiple sequence alignment of CsgC functional homologues }
-%\begin{figure} %--------------------------------------------------jak dodać figurę do posteru
-<<echo=FALSE,results='asis',message=FALSE,error=FALSE,warning=FALSE,fig.width=14.2,fig.height=10>>=
-library(ggplot2)
-library(dplyr)
+\begin{block}{Quality control}
 
-# input file -----------------------------------
-all_lines <- readLines("csgc.ttr.csgh.aln.txt")
+\justify lalala
 
-# number of facets
-n_facets <- 4
-
-# important regions ---------------------------------
-
-region_borders <- list(R1 = 37L:39)
-
-# amino acid colors ---------------------------------
-
-alph_color_list <- list(list(col = "#8dd3c7", aa = c("G", "A", "S", "T")),
-                        list(col = "#ffffb3", aa = c("C", "V", "I", "L", "P", "F", "Y", "M", "W")),
-                        list(col = "#bebada", aa = c("N", "H", "Q")),
-                        list(col = "#fb8072", aa = c("D", "E")),
-                        list(col = "#80b1d3", aa = c("K", "R")),
-                        list(col = "white", aa = c("-")))
-
-reduced_alph <- lapply(alph_color_list, function(i) i[["aa"]])
-
-names(reduced_alph) <- c("Small nonpolar",
-                         "Hydrophobic",
-                         "Polar",
-                         "Negatively charged",
-                         "Positively charged",
-                         "Gap")
-
-cols <- sapply(alph_color_list, function(i) i[["col"]])
-
-# process alignment ---------------------------------
-
-prot_id <- cumsum(grepl("^>", all_lines))
-
-all_prots <- split(all_lines, prot_id)
-
-# lapply(all_prots, function(ith_prot) {
-#   paste0(ith_prot[-1], collapse = "")
-# }) %>% 
-#   regexpr(pattern = "C", text = .)
-
-aln_dat <- lapply(all_prots, function(ith_prot) {
-  data.frame(species = sub("^>", "", ith_prot[1]),
-             aa = strsplit(paste0(ith_prot[-1], collapse = ""), "")[[1]],
-             stringsAsFactors = FALSE)
-}) %>% bind_rows() %>% 
-  #mutate(species = factor(species, levels = rev(c("Escherichia coli", "Citrobacter koseri", "Salmonella typhimurium", 
-  #                                                "Shewanella oneidensis")))) %>% 
-  group_by(species) %>% 
-  mutate(pos = 1L:length(species),
-         pos_disc = cut(pos, quantile(pos, probs = seq(from = 0, to = 1, length.out = n_facets + 1)), include.lowest = TRUE),
-         aa_groups = factor(biogram::degenerate(aa, reduced_alph),
-                            levels = names(reduced_alph)),
-         real_pos = cumsum(aa != "-"),
-         prone = real_pos %in% 37L:39,
-         pos_prone = ifelse(prone, pos, NA),
-         pos_prone = ifelse(species == "CsgC", pos_prone, NA),
-         pos_prone = ifelse(aa != "-", pos_prone, NA))
-
-ggplot(aln_dat, aes(x = pos, y = species, label = aa, fill = aa_groups)) +
-  geom_tile(color = NA) +
-  facet_wrap(~ pos_disc, ncol = 1, scales = "free_x") +
-  geom_tile(aes(x = pos_prone), color = "black", fill = NA, size = 2) +
-  #geom_text(size = 2.1, family = "Courier", fontface="bold") +
-  geom_text(size = 7.1)  +
-  scale_x_continuous("Position", expand = c(0, 0)) +
-  scale_y_discrete("") +
-  scale_fill_manual("", values = cols) +
-  guides(fill = guide_legend(nrow = 1, byrow = TRUE, override.aes = list(color = "black", size = 1.4))) + 
-  theme_bw(base_size = 24) +
-  theme(legend.position = "bottom",
-        legend.key.size = unit(2.5, "lines"),
-        strip.background = element_blank(),
-        strip.text.x = element_blank())
-@
-\justify Motif CxC is highlited on black in CsgC. The alignment of curli inhibitors (CsgC, CsgH and TTR) showed no sequence similarity. The CxC motif, present in CsgC sequence and important in the inhibition of CsgA aggregation, does not exist in TTR and CsgH.
-%\includegraphics[width=0.95\columnwidth]{aln5.pdf}
-%\end{figure}
 \end{block}
-%\vfill
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{block}{Conclusions}
-\justify CsgC and CsgA sequences exhibit similar level of sequence divergence in their homologues except for one species. Nevertheless, functional homologues of CsgC, CsgH and TTR show no sequence similarity between them. Knowing that all these proteins are able to inhibit CsgA, we can assume that inhibitory properties are not manifested in the primary sequence and must depend on three-dimensional structure.
+\begin{block}{Report function}
+\begin{figure}
+\includegraphics[width=0.95\columnwidth]{app_report_generation.pdf}
+\end{figure}
+\justify lala
 \end{block}
 %\vfill
 
@@ -490,6 +242,7 @@ Foundation of Polish Science TEAM TECH CORE FACILITY/2016-2/2 Mass Spectrometry 
 
 \end{block}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 }
 \end{minipage}
