@@ -78,7 +78,7 @@
 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 \newlength{\columnheight}
-\setlength{\columnheight}{86cm} % ------------------------------- od jakiej wysokości mają zaczynać się klocki, ale też miejsce dla tytułu autorów, afiliacji
+\setlength{\columnheight}{81cm} % ------------------------------- od jakiej wysokości mają zaczynać się klocki, ale też miejsce dla tytułu autorów, afiliacji
 \renewcommand{\thetable}{}
 \def\andname{,}
 \authornote{}
@@ -114,7 +114,7 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 }
 
 
-\title{\huge Selective inhibition of biofilm-associated amyloids} % --------------------------------------------------------------Tytuł
+\title{\huge HaDeX: an R package and web-server for analysis of data from hydrogen deuterium exchange-mass spectrometry experiments} % --------------------------------------------------------------Tytuł
 
 
 \begin{frame}
@@ -126,7 +126,7 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 {
 
 \begin{block}{Introduction}
-\justify Amyloid fibrils are heterogeneous proteins capable to self-assembly fibrous aggregates deposited in organs and tissues. These aggregates are associated with incurable degenerative illnesses such as Alzheimer{'}s (amyloid $\beta$) and Parkinson{'}s ($\alpha$-synuclein) disease. Amyloid fibrils are made of soluble proteins, however, amyloid fibers are insoluble and resistant to degradation. The curli system that occurs in enteric bacteria consists of self-assembling functional amyloid, CsgA. Functional amyloids occur in natural environment in many biological system and, in contrast to amyloids associated with disorders, they are tightly controlled. For example, CsgA is effectively inhibited by CsgC [1]. In addition, CsgC inhibits human $\alpha$-synuclein. CsgC possesses its functional homologues, such as CsgH [2] and transthyretin (TTR) [3], which also show antiamyloid activity despite completely different sequences. To check if there are significant differences among CsgA homologues and CsgC homologues, we carried out sequence comparisons. In addition, we compared CsgA and $\alpha$-synuclein as well as CsgC with its functional homologues, CsgH and TTR.
+\justify lalala 
 \end{block}
 %\vfill % ------------------------------------------- Możecie zacommentować, zostawia puste miejsce, jeśli macie za mało tekstu doda większe przerwy
 
