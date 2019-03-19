@@ -5,6 +5,7 @@
 \usepackage{epstopdf}
 \usepackage{multicol}
 \usepackage{ragged2e}
+
 %\usepackage{polski}
 %% maxwidth is the original width if it is less than linewidth
 %% otherwise use linewidth (to make sure the graphics do not exceed the margin)
@@ -51,7 +52,6 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{natbib}
-% \usepackage{polski}
 \usepackage{graphicx}
 \usepackage{array,booktabs,tabularx}
 \usepackage{epstopdf}
@@ -66,10 +66,9 @@
 \usetikzlibrary{arrows}
 \usetikzlibrary[topaths]
 \usetikzlibrary{decorations.pathreplacing}
-%\usepackage{times}\usefonttheme{professionalfonts}  % times is obsolete
 \usefonttheme[onlymath]{serif}
 \boldmath
-\usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}                       % e.g. for DIN-A0 poster
+\usepackage[orientation=portrait,size=a0,scale=1,debug]{beamerposter}                       % e.g. for DIN-A0 poster
 %\usepackage[orientation=portrait,size=a1,scale=1.4,grid,debug]{beamerposter}                  % e.g. for DIN-A1 poster, with optional grid and debug output
 %\usepackage[size=custom,width=200,height=120,scale=2,debug]{beamerposter}                     % e.g. for custom size poster
 %\usepackage[orientation=portrait,size=a0,scale=1.0,printer=rwth-glossy-uv.df]{beamerposter}   % e.g. for DIN-A0 poster with rwth-glossy-uv printer check
@@ -79,17 +78,18 @@
 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 \newlength{\columnheight}
-\setlength{\columnheight}{81cm} % ------------------------------- od jakiej wysokości mają zaczynać się klocki, ale też miejsce dla tytułu autorów, afiliacji
+\setlength{\columnheight}{88cm} % ------------------------------- od jakiej wysokości mają zaczynać się klocki, ale też miejsce dla tytułu autorów, afiliacji
 \renewcommand{\thetable}{}
 \def\andname{,}
 \authornote{}
 
-\renewcommand{\APACrefatitle}[2]{}
-\renewcommand{\bibliographytypesize}{\footnotesize} 
-\renewcommand{\APACrefYearMonthDay}[3]{%
-  {\BBOP}{#1}
-  {\BBCP}
-}
+% \renewcommand{\APACrefatitle}[2]{}
+% \renewcommand{\bibliographytypesize}{\footnotesize} 
+% \renewcommand{\APACrefYearMonthDay}[3]{%
+%   {\BBOP}{#1}
+%   {\BBCP}
+% }
+
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
@@ -115,7 +115,7 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 }
 
 
-\title{\huge HaDeX: an R package and web-server for analysis of data from hydrogen deuterium exchange-mass spectrometry experiments} % --------------------------------------------------------------Tytuł
+\title{\huge HaDeX: an R package and web-server for analysis of data from hydrogen deuterium exchange - mass spectrometry experiments} % --------------------------------------------------------------Tytuł
 
 
 \begin{frame}
@@ -132,34 +132,29 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 <<echo=FALSE, warning=FALSE, error=FALSE, message=FALSE>>=
 library(HaDeX)
 library(ggplot2)
+library(patchwork)
 
 knitr::opts_chunk$set(out.width=1000, out.height=750)
-poster_theme <- theme_bw(base_size = 17) +
-                theme(legend.position = "bottom")
 
-dat <- read_hdx(system.file(package = "HaDeX", "HaDeX/data/KD_180110_CD160_HVEM.csv"))
+poster_theme <- theme_bw(base_size = 10) +
+                theme(legend.position = "bottom",
+                      legend.title = element_blank())
+
+dat <- read_hdx(system.file(package = "HaDeX", "HaDeX/data/KD_190304_Nucb2_EDTA_CaCl2_test02_clusterdata.csv"))
 
 calc_dat <- prepare_dataset(dat,
-                             in_state_first = "CD160_0.001",
-                             chosen_state_first = "CD160_1",
-                             out_state_first = "CD160_1440",
-                             in_state_second = "CD160_HVEM_0.001",
-                             chosen_state_second = "CD160_HVEM_1",
-                             out_state_second = "CD160_HVEM_1440") 
+                             in_state_first = "gg_Nucb2_EDTA_0.001",
+                             chosen_state_first = "gg_Nucb2_EDTA_25",
+                             out_state_first = "gg_Nucb2_EDTA_1440",
+                             in_state_second = "gg_Nucb2_CaCl2_0.001",
+                             chosen_state_second = "gg_Nucb2_CaCl2_25",
+                             out_state_second = "gg_Nucb2_CaCl2_1440") 
 
 @
 
-\justify lalala 
-
-% \begin{figure}
-% \includegraphics[width=0.95\columnwidth]{app_hadex_front.pdf}
-% \end{figure}
+\justify Protein dynamics and structure stability studied with HDX-MS is routinely limited to the peptide resolution of 5 to 20 amino acid residues. Obtaining amino-acid or near-amino-acid resolution in proton-deuter exchange experiments (HR-HDX-MS) gives a new quality of analysis and deeper insight into protein structure. This approach can be also employed to re-analyze previously obtained data while having their appropriate quality (high redundancy). We propose a novel application of the exchange kinetic parameter for individual amino acids residue calculated from HR-HDX-MS measurements in the modeling the protein structure using SURPASS algorithms.
 
 \end{block}
-
-
-
-\vfill
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -167,26 +162,53 @@ calc_dat <- prepare_dataset(dat,
 
 \justify lala
 
+\begin{figure}
+\includegraphics[width=0.95\columnwidth]{app_coverage.png}
+\end{figure}
+
 \end{block}
-%\vfill
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{block}{Differential plot}
 %\begin{figure} %--------------------------------------------------jak dodać figurę do posteru
-<<echo=FALSE, warning=FALSE, message=FALSE, error=FALSE>>=
+<<echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, fig.align="center">>=
 
- comparison_plot(calc_dat = calc_dat,
-                 plot_title = "Theoretical fraction exchanged \nin state comparison in chosen time",
-                 theoretical = TRUE) +
+ c1 <- comparison_plot(calc_dat = calc_dat,
+                 plot_title = "Theoretical fraction exchanged in \nstate comparison in 25 min time",
+                 theoretical = TRUE,
+                 state_first = "gg_Nucb2_EDTA",
+                 state_second = "gg_Nucb2_CaCl2") +
    poster_theme 
+
+ c2 <- comparison_plot(calc_dat = calc_dat,
+                 plot_title = "Fraction exchanged in state comparison \nin 25 min time",
+                 theoretical = FALSE,
+                 state_first = "gg_Nucb2_EDTA",
+                 state_second = "gg_Nucb2_CaCl2") +
+   poster_theme
  
- comparison_plot(calc_dat = calc_dat,
-                 plot_title = "Fraction exchanged \nin state comparison in chosen time") +
-   poster_theme 
-@
+ c1 + c2
+ 
+ @
 
 \justify lalalal
+
+\begin{equation}
+D = \frac{D_{t} - D_{0}}{D_{100} - D_{0}}
+\end{equation}
+
+\justify lalalala1
+
+\begin{equation}
+u_{c}(y) = \sqrt{\sum_{k} \left[ \frac{\partial y}{\partial x_{k}} u(x_{k}) \right]^2}
+\end{equation}
+
+\justify lalala2
+
+\begin{equation}
+u_{c}(D) = \sqrt{ \left[ \frac{1}{D_{100}-D_{0}} u(D_{t}) \right]^2 + \left[ \frac{D_{t} - D_{100}}{(D_{100}-D_{0})^2} u(D_{0}) \right]^2 + \left[ \frac{D_{0} - D_{t}}{(D_{100}-D_{0})^2} u(D_{100}) \right]^2}
+\end{equation}
 
 \end{block}
 }
@@ -207,20 +229,62 @@ calc_dat <- prepare_dataset(dat,
 
 \begin{block}{Woods plot format}
 
-<<echo=FALSE, warning=FALSE, error=FALSE, message=FALSE>>=
+<<echo=FALSE, warning=FALSE, error=FALSE, message=FALSE, fig.align="center">>=
 
- woods_plot(calc_dat = calc_dat) +
-   poster_theme
+ knitr::opts_chunk$set(out.width=1000, out.height=550)
+ 
+ w1 <- woods_plot(calc_dat = calc_dat,
+            plot_title = "Theoretical fraction exchanged between \nstates in 25 min time",
+            theoretical = TRUE) +
+   poster_theme +
+   scale_y_continuous(limits = c(-0.6, 0.8), expand = c(0, 0))
+ 
+ w2 <- woods_plot(calc_dat = calc_dat,
+            plot_title = "Fraction exchanged between states \nin 25 min time",
+            theoretical = FALSE) +
+   poster_theme +
+   scale_y_continuous(limits = c(-0.6, 0.8), expand = c(0, 0))
+ 
+ w1 + w2
  
 @
 
 \justify lalala
+
+\begin{equation}
+diff = D_{1} - D_{2}
+\end{equation}
+
+\begin{equation}
+u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
+\end{equation}
 \end{block}
 \vfill
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{block}{Quality control}
+
+<<echo=FALSE, message=FALSE, warning=FALSE, error=FALSE, fig.align="center">>=
+
+ knitr::opts_chunk$set(out.width=1000, out.height=300)
+ 
+ result <- quality_control(dat = dat,
+                          state_first = "gg_Nucb2_EDTA",
+                          state_second = "gg_Nucb2_CaCl2", 
+                          chosen_time = 25, 
+                          in_time = 0.001)
+ggplot(result) + 
+  geom_line(aes(x = time, y = avg_err_state_first, color = "avg_err_state_first")) +
+  geom_line(aes(x = time, y = avg_err_state_second, color = "avg_err_state_second")) +
+  geom_line(aes(x = time, y = avg_diff, color = "avg_diff")) +
+  scale_x_log10() +
+  scale_y_log10(limits = c(0.03,1e1)) +
+  labs(x = "log(time) [min]", y = "Average uncertainty [log]", title = "Uncertainty change in out time") +
+  poster_theme
+ 
+@
+
 
 \justify lalala
 
@@ -230,15 +294,26 @@ calc_dat <- prepare_dataset(dat,
 
 \begin{block}{Report function}
 \begin{figure}
-\includegraphics[width=0.95\columnwidth]{app_report_generation.pdf}
+\includegraphics[width=0.95\columnwidth]{app_report.png}
 \end{figure}
 \justify lala
 \end{block}
-%\vfill
+
+\begin{block}{Bibliography}
+
+\justify lalala
+
+\end{block}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{block}{Acknowledgements}
 
-Foundation of Polish Science TEAM TECH CORE FACILITY/2016-2/2 Mass Spectrometry of Biopharmaceuticals - improved methodologies for qualitative, quantitative and structural characterization of drugs, proteinaceous drug targets and diagnostic molecules.
+The project is carried out within the TEAM TECH programme of the Foundation for Polish Science co-financed by the European Union under the European Regional Development Fund.(TEAM TECH CORE FACILITY/2016-2/2) „Mass Spectrometry of Biopharmaceuticals-improved methodologies for qualitative, quantitative and structural characterization of drugs, proteinaceous drug targets and diagnostic molecules”
+
+\begin{figure}
+\includegraphics[width=0.95\columnwidth]{listwa.png}
+\end{figure}
 
 \end{block}
 
@@ -249,5 +324,9 @@ Foundation of Polish Science TEAM TECH CORE FACILITY/2016-2/2 Mass Spectrometry 
 \end{beamercolorbox}
 \end{column}
 \end{columns}  
+
+
 \end{frame}
+
+
 \end{document}
