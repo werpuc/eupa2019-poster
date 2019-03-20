@@ -83,12 +83,7 @@
 \def\andname{,}
 \authornote{}
 
-% \renewcommand{\APACrefatitle}[2]{}
-% \renewcommand{\bibliographytypesize}{\footnotesize} 
-% \renewcommand{\APACrefYearMonthDay}[3]{%
-%   {\BBOP}{#1}
-%   {\BBCP}
-% }
+
 
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
@@ -96,6 +91,8 @@
 
 % Początek posteru
 %-------------------------------------------------------------------------------------------------------------------
+%--------------------------------------------------------------Tytuł
+\title{\huge HaDeX: an R package and web-server for analysis of data from hydrogen deuterium exchange - mass spectrometry experiments} 
 
 % -----------------------------------------------------------Autorzy, mail, afiliacje
 \date{}
@@ -115,7 +112,7 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 }
 
 
-\title{\huge HaDeX: an R package and web-server for analysis of data from hydrogen deuterium exchange - mass spectrometry experiments} % --------------------------------------------------------------Tytuł
+
 
 
 \begin{frame}
@@ -231,7 +228,7 @@ u_{c}(D) = \sqrt{ \left[ \frac{1}{D_{100}-D_{0}} u(D_{t}) \right]^2 + \left[ \fr
 
 <<echo=FALSE, warning=FALSE, error=FALSE, message=FALSE, fig.align="center">>=
 
- knitr::opts_chunk$set(out.width=1000, out.height=550)
+ knitr::opts_chunk$set(out.width=1000, out.height=300)
  
  w1 <- woods_plot(calc_dat = calc_dat,
             plot_title = "Theoretical fraction exchanged between \nstates in 25 min time",
@@ -266,23 +263,22 @@ u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
 \begin{block}{Quality control}
 
 <<echo=FALSE, message=FALSE, warning=FALSE, error=FALSE, fig.align="center">>=
-
- knitr::opts_chunk$set(out.width=1000, out.height=300)
  
  result <- quality_control(dat = dat,
                           state_first = "gg_Nucb2_EDTA",
                           state_second = "gg_Nucb2_CaCl2", 
                           chosen_time = 25, 
                           in_time = 0.001)
-ggplot(result) + 
+
+ knitr::opts_chunk$set(out.width=1000, out.height=250)
+
+ ggplot(result[result["time"]>=1,]) + 
   geom_line(aes(x = time, y = avg_err_state_first, color = "avg_err_state_first")) +
   geom_line(aes(x = time, y = avg_err_state_second, color = "avg_err_state_second")) +
-  geom_line(aes(x = time, y = avg_diff, color = "avg_diff")) +
   scale_x_log10() +
-  scale_y_log10(limits = c(0.03,1e1)) +
-  labs(x = "log(time) [min]", y = "Average uncertainty [log]", title = "Uncertainty change in out time") +
+  labs(x = "log(time) [min]", y = "Average uncertainty", title = "Uncertainty change in out time") + 
   poster_theme
- 
+
 @
 
 
@@ -309,7 +305,7 @@ ggplot(result) +
 
 \begin{block}{Acknowledgements}
 
-The project is carried out within the TEAM TECH programme of the Foundation for Polish Science co-financed by the European Union under the European Regional Development Fund.(TEAM TECH CORE FACILITY/2016-2/2) „Mass Spectrometry of Biopharmaceuticals-improved methodologies for qualitative, quantitative and structural characterization of drugs, proteinaceous drug targets and diagnostic molecules”
+\justify The project is carried out within the TEAM TECH programme of the Foundation for Polish Science co-financed by the European Union under the European Regional Development Fund.(TEAM TECH CORE FACILITY/2016-2/2) „Mass Spectrometry of Biopharmaceuticals-improved methodologies for qualitative, quantitative and structural characterization of drugs, proteinaceous drug targets and diagnostic molecules”
 
 \begin{figure}
 \includegraphics[width=0.95\columnwidth]{listwa.png}
