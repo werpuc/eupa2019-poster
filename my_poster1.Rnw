@@ -78,7 +78,7 @@
 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 \newlength{\columnheight}
-\setlength{\columnheight}{88cm} % ------------------------------- od jakiej wysokości mają zaczynać się klocki, ale też miejsce dla tytułu autorów, afiliacji
+\setlength{\columnheight}{91cm} % ------------------------------- od jakiej wysokości mają zaczynać się klocki, ale też miejsce dla tytułu autorów, afiliacji
 \renewcommand{\thetable}{}
 \def\andname{,}
 \authornote{}
@@ -112,10 +112,23 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 }
 
 
-
-
-
 \begin{frame}
+% \begin{center}
+
+  \begin{tabular}{ c{4cm} c{25cm} c{4cm} }
+
+  \begin{figure}
+  \includegraphics[width=0.07\columnwidth]{ibb.png}
+  \end{figure} &                                           &
+  \begin{figure}
+  \includegraphics[width=0.11\columnwidth]{mslab.png}
+  \end{figure}
+
+  \end{tabular}
+% \end{center}
+
+
+
 \begin{columns}
 \begin{column}{.5\textwidth} %------------------------------------------------ szerokość kolumny lewej
 \begin{beamercolorbox}[center,wd=\textwidth]{postercolumn}
@@ -228,7 +241,7 @@ u_{c}(D) = \sqrt{ \left[ \frac{1}{D_{100}-D_{0}} u(D_{t}) \right]^2 + \left[ \fr
 
 <<echo=FALSE, warning=FALSE, error=FALSE, message=FALSE, fig.align="center">>=
 
- knitr::opts_chunk$set(out.width=1000, out.height=300)
+ knitr::opts_chunk$set(out.width=900, out.height=300)
  
  w1 <- woods_plot(calc_dat = calc_dat,
             plot_title = "Theoretical fraction exchanged between \nstates in 25 min time",
