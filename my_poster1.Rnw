@@ -295,7 +295,7 @@ u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
 
 \begin{block}{Quality control}
 
-\justify HaDeX provides additional tools for decision making. A perfect example is quality_control() function that shows how the mean uncertainty per peptide changes with "out time" parameter change. The user can see if chosen out time is sufficient for acceptable uncertainty values, or is it better to choose different value.
+\justify HaDeX provides additional tools for decision making. A perfect example is quality control function that shows how the mean uncertainty per peptide changes with out time parameter change. The user can see if chosen out time is sufficient for acceptable uncertainty values, or is it better to choose different value.
 
 \begin{figure}
 <<echo=FALSE, message=FALSE, warning=FALSE, error=FALSE, fig.align="center", fig.height=7, fig.width=15, out.height=300, out.width=900>>=
@@ -336,7 +336,7 @@ u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
 
 \begin{block}{Bibliography}
 
-
+\vfill
 
 \end{block}
 
