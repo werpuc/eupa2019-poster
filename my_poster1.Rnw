@@ -160,7 +160,7 @@ calc_dat <- prepare_dataset(dat,
 We start our analysis with summary of protein coverage (as shown below). It is provided in two forms, histogram and graphic comparison of positions. Also the reconstruction of the sequence is available - based on experimental data.
 
 \begin{figure}
-\includegraphics[width=0.95\columnwidth]{app_coverage.png}
+\includegraphics[width=0.95\columnwidth]{app_coverage.pdf}
 \caption{Screenshot of HaDeX - page with presentation of sequence coverage using example data}
 \end{figure}
 
