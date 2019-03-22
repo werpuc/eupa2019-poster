@@ -94,7 +94,7 @@
 % Początek posteru
 %-------------------------------------------------------------------------------------------------------------------
 %--------------------------------------------------------------Tytuł
-\title{\huge HaDeX: an R package and web-server for analysis of data from hydrogen deuterium exchange - mass spectrometry experiments} 
+\title{\huge \textbf{HaDeX}: an R package and web-server for analysis of data from hydrogen deuterium exchange - mass spectrometry experiments} 
 
 % -----------------------------------------------------------Autorzy, mail, afiliacje
 \date{}
@@ -129,6 +129,7 @@ $^{\text{\sf 3}}$Faculty of Chemistry, Biological and Chemical Research Center, 
 library(HaDeX)
 library(ggplot2)
 library(patchwork)
+library(dplyr)
 
 knitr::opts_chunk$set(out.width=1000, out.height=750)
 
@@ -148,7 +149,7 @@ calc_dat <- prepare_dataset(dat,
 
 @
 
-\justify Hydrogen-deuterium mass spectrometry (HDX-MS) is a staple tool for monitoring dynamics and interactions of proteins. Due to the sheer size of the HDX-MS results, the data analysis require a dedicated software suite. However, the majority of existing tools provides only point-and-click interfaces to black-box models or does not offer a complete workflow. We propose HaDeX, a novel tool for processing, analysis and visualisation of HDX-MS experiments. HaDeX covers the whole analytic process, including preliminary data exploration, quality control and generation of publication-quality figures. The reproducibility of the whole procedure is ensured with advanced reporting functions. HaDeX is available primarily as a web-server, but his all functionalities are also accessible as the R package (\url{https://CRAN.R-project.org/package=HaDeX}).
+\justify Hydrogen-deuterium mass spectrometry (HDX-MS) is a staple tool for monitoring dynamics and interactions of proteins. Due to the sheer size of the HDX-MS results, the data analysis require a dedicated software suite. However, the majority of existing tools provides only point-and-click interfaces to black-box models or does not offer a complete workflow. We propose \textbf{HaDeX}, a novel tool for processing, analysis and visualisation of HDX-MS experiments. \textbf{HaDeX} covers the whole analytic process, including preliminary data exploration, quality control and generation of publication-quality figures. The reproducibility of the whole procedure is ensured with advanced reporting functions.
 
 \end{block}
 
@@ -156,12 +157,13 @@ calc_dat <- prepare_dataset(dat,
 
 \begin{block}{Coverage of the sequence} 
 
-\justify Everything you need to use HaDeX is a DynamiX datafile. In future, the functionality will be available for more than this datafile type. All the calculations are done by our software using default parameters or chosen by user.  
+\justify The \textbf{HaDeX} web server relies only on a single data format: DynamiX datafile. An user can customize each step of the analysis with his own input parameters.
+
 We start our analysis with summary of protein coverage (as shown below). It is provided in two forms, histogram and graphic comparison of positions. Also the reconstruction of the sequence is available - based on experimental data.
 
 \begin{figure}
 \includegraphics[width=0.95\columnwidth]{app_coverage.pdf}
-\caption{Screenshot of HaDeX - page with presentation of sequence coverage using example data}
+\caption{Sequence coverage analysis (\textbf{HaDeX} web server).}
 \end{figure}
 
 \end{block}
@@ -170,7 +172,7 @@ We start our analysis with summary of protein coverage (as shown below). It is p
 
 \begin{block}{Differential plot}
 
-\justify Important aspect of analysing data is comparing results of peptide deuteration in different states. Relative deuteration level used by HaDeX is defined by equation \ref{eq:deut_lev}.
+\justify An important aspect of analysing data is a comparison of peptide deuteration in different states. A relative deuteration level used by \textbf{HaDeX} is defined by the equation \ref{eq:deut_lev}.
 
 \begin{equation}
 D = \frac{D_{t} - D_{0}}{D_{100} - D_{0}}
@@ -191,22 +193,22 @@ u_{c}(D) = \sqrt{ \left[ \frac{1}{D_{100}-D_{0}} u(D_{t}) \right]^2 + \left[ \fr
 \label{eq:deut_lev_un}
 \end{equation}
 
-\justify Results of deuteration level calculations with their uncertainty are shown on comparison plot, showed below. HaDeX provide both experimental and theroetical calculations, shown side by side for comparison on figure \ref{fig:comp_plots}.
+\justify The levels of deuteration along with uncertainty intervals are shown on comparison plot~\ref{fig:comp_plots}. \textbf{HaDeX} provide both experimental and theroetical levels of deuteration.
 \begin{figure}
 <<echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, fig.align="center">>=
 
  c1 <- comparison_plot(calc_dat = calc_dat,
                  plot_title = "Theoretical fraction exchanged in \nstate comparison in 25 min time",
                  theoretical = TRUE,
-                 state_first = "gg_Nucb2_EDTA",
-                 state_second = "gg_Nucb2_CaCl2") +
+                 state_first = "Nucb2 Factor 1",
+                 state_second = "Nucb2 Factor 2") +
    poster_theme 
 
  c2 <- comparison_plot(calc_dat = calc_dat,
                  plot_title = "Fraction exchanged in state comparison \nin 25 min time",
                  theoretical = FALSE,
-                 state_first = "gg_Nucb2_EDTA",
-                 state_second = "gg_Nucb2_CaCl2") +
+                 state_first = "Nucb2 Factor 1",
+                 state_second = "Nucb2 Factor 2") +
    poster_theme
  
  c1 + c2
@@ -220,7 +222,7 @@ u_{c}(D) = \sqrt{ \left[ \frac{1}{D_{100}-D_{0}} u(D_{t}) \right]^2 + \left[ \fr
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{block}{Visit us!}
+\begin{block}{Availability}
 
      \url{http://mslab-ibb.pl/shiny/HaDeX/}$\begin{array}{l}
         \begin{figure}[ht]
@@ -230,6 +232,13 @@ u_{c}(D) = \sqrt{ \left[ \frac{1}{D_{100}-D_{0}} u(D_{t}) \right]^2 + \left[ \fr
         }
         \end{figure}
       \end{array}
+
+HaDeX is also available as the R package:
+<<echo=TRUE, eval=FALSE, warning=FALSE, message=FALSE, error=FALSE, fig.align="center">>=
+source("https://install-github.me/michbur/HaDeX")
+@
+
+
 
 \end{block}
 
@@ -295,10 +304,11 @@ u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
 
 \begin{block}{Quality control}
 
-\justify HaDeX provides additional tools for decision making. A perfect example is quality control function that shows how the mean uncertainty per peptide changes with out time parameter change. The user can see if chosen out time is sufficient for acceptable uncertainty values, or is it better to choose different value.
+\justify \textbf{HaDeX} provides additional tools for assement of experiments. For example, the quality control function shows
+how the mean uncertainty per peptide changes with time points of an experiment.
 
 \begin{figure}
-<<echo=FALSE, message=FALSE, warning=FALSE, error=FALSE, fig.align="center", fig.height=7, fig.width=15, out.height=300, out.width=900>>=
+<<echo=FALSE, message=FALSE, warning=FALSE, error=FALSE, fig.align="center", fig.height=3.5, fig.width=6,out.height=450>>=
  
  result <- quality_control(dat = dat,
                           state_first = "gg_Nucb2_EDTA",
@@ -307,11 +317,11 @@ u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
                           in_time = 0.001)
 
  ggplot(result[result["time"]>=1,]) + 
-  geom_line(aes(x = time, y = avg_err_state_first, color = "avg_err_state_first")) +
-  geom_line(aes(x = time, y = avg_err_state_second, color = "avg_err_state_second")) +
+  geom_line(aes(x = time, y = avg_err_state_first, color = "Average error (first state)")) +
+  geom_line(aes(x = time, y = avg_err_state_second, color = "Average error (second state)")) +
   scale_x_log10() +
-  labs(x = "log(time) [min]", y = "Average uncertainty", title = "Uncertainty change in out time") + 
-  theme_bw(base_size = 25) +
+  labs(x = "log(time) [min]", y = "Average uncertainty", title = "Uncertainty change") + 
+  theme_bw(base_size = 11) +
   theme(legend.position = "bottom",
         legend.title = element_blank())
 
@@ -325,20 +335,23 @@ u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
 
 \begin{block}{Report function}
 
-\justify HaDeX provides report generation - with parameters chosen by user so is fully personalizable. Additionaly, calculated data for plots can be downloaded not only in report form but also in csv/pdf file in panel next to every plot. On figure \ref{fig:rep} are shown available elements of the report - that can be chosen by user and limited strickly for user needs. 
-
-\begin{figure}
-\includegraphics[width=0.8\columnwidth]{app_report.png}
-\caption{Screenshot of HaDeX - reporting page}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+   \textbf{HaDeX} provides report generation - with parameters chosen by user so is fully personalizable. Additionaly, calculated data for plots can be downloaded not only in report form but also in csv/pdf file in panel next to every plot. On figure \ref{fig:rep} are shown available elements of the report - that can be chosen by user and limited strickly for user needs.
+\end{column}
+\begin{column}{0.5\textwidth}  %%<--- here
+    \begin{center}
+     \begin{figure}
+\includegraphics[width=0.9\columnwidth]{app_report.png}
+\caption{Screenshot of \textbf{HaDeX} - reporting page}
 \label{fig:rep}
 \end{figure}
-\end{block}
-
-\begin{block}{Bibliography}
-
-\vfill
+     \end{center}
+\end{column}
+\end{columns}
 
 \end{block}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -352,6 +365,27 @@ u_{c}(diff) = \sqrt{u(D_{1})^2 + u(D_{2})^2}
 \end{figure}
 
 \end{block}
+
+\begin{block}{Bibliography}
+
+
+\begin{enumerate}
+\small
+\item [1] Start2Fold: a database of hydrogen/deuterium exchange data on protein folding and stability. Pancsa R,
+Varadi M, Tompa P, Vranken WF. Nucleic Acids Res. 2016 Jan 4;44(D1):D429-34. doi:
+10.1093/nar/gkv1185. Epub 2015 Nov 17
+\item [2] HDX workbench: software for the analysis of H/D exchange MS data. Pascal BD, Willis S, Lauer JL,
+Landgraf RR, West GM, Marciano D, Novick S, Goswami D, Chalmers MJ, Griffin PR. J Am Soc Mass
+Spectrom. 2012 Sep;23(9):1512-21. doi: 10.1007/s13361-012-0419-6. Epub 2012 Jun 13.
+\item [3] MEMHDX: an interactive tool to expedite the statistical validation and visualization of large HDX-MS
+datasets. Hourdel V, Volant S, O'Brien DP, Chenal A, Chamot-Rooke J, Dillies MA, Brier S. Bioinformatics.
+2016 Nov 15;32(22):3413-3419. Epub 2016 Jul 13
+\item [4] Deuteros: software for rapid analysis and visualization of data from differential hydrogen deuterium exchange-mass spectrometry, Andy M C Lau, Zainab Ahdash, Chloe Martens, Argyris Politis, , Bioinformatics, btz022, https://doi.org/10.1093/bioinformatics/btz022
+\item [5] ISO, Guide to the Expression of Uncertainty in Measurement (International Organization for Standardization, Geneva, Switzerland, 1993)
+\end{enumerate}
+\end{block}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
